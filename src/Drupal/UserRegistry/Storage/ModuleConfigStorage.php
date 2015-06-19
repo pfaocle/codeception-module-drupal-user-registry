@@ -37,6 +37,13 @@ class ModuleConfigStorage implements StorageInterface
     protected $password;
 
     /**
+     * Indexed array of email addresses, where the key is the role name.
+     *
+     * @var string
+     */
+    protected $emails;
+
+    /**
      * Check for required module configuration and initialize.
      *
      * @param array $config
@@ -45,6 +52,7 @@ class ModuleConfigStorage implements StorageInterface
     public function __construct($config)
     {
         $this->roles = $config['roles'];
+        $this->emails = $config['emails'];
         $this->password = $config['password'];
     }
 
@@ -59,7 +67,11 @@ class ModuleConfigStorage implements StorageInterface
             function ($roleName) {
                 $roleNameSuffix = preg_replace(self::DRUPAL_ROLE_TO_USERNAME_PATTERN, ".", $roleName);
                 $userName = self::DRUPAL_USERNAME_PREFIX . "." . $roleNameSuffix;
-                return new DrupalTestUser($userName, $this->password, $roleName);
+
+                // If an email address has been provided, set one.
+                $email = isset($this->emails[$roleName]) ? $this->emails[$roleName] : null;
+
+                return new DrupalTestUser($userName, $this->password, $roleName, $email);
             },
             array_combine($this->roles, $this->roles)
         );

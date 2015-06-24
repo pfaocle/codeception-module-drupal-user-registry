@@ -52,7 +52,7 @@ class ModuleConfigStorage implements StorageInterface
     public function __construct($config)
     {
         $this->roles = $config['roles'];
-        $this->emails = $config['emails'][0];
+        $this->emails = isset($config['emails'][0]) ? $config['emails'][0] : array();
         $this->password = $config['password'];
     }
 

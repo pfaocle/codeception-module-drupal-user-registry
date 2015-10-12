@@ -80,6 +80,12 @@ class ModuleConfigStorage implements StorageInterface
                 $item['email']
             );
 
+            // If user is marked as root user, save this to the user object.
+            if (isset($this->yaml['root']) && $this->yaml['root'] == 'true') {
+                $user->isRoot = true;
+            }
+
+            // Save the user to the collection.
             $this->users[$item['name']] = $user;
         }
 

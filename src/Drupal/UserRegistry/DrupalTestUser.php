@@ -35,6 +35,13 @@ class DrupalTestUser
     public $roles = array();
 
     /**
+     * Whether this user is the root user (user 1).
+     *
+     * @var bool
+     */
+    public $isRoot = false;
+
+    /**
      * Constructor.
      *
      * @param string $name

@@ -77,40 +77,41 @@ modules:
         PhpBrowser:
             url: 'http://localhost/myapp/'
         DrupalUserRegistry:
-            roles: ['administrator', 'editor', 'sub editor', 'lowly-user', 'authenticated']  # A list of user roles.
-            emails:
-                administrator: 'admin@example.com'
-                editor: 'editor@example.com'
-            password: 'test123!'         # The password to use for all test users.
+            defaultPass: "foobar"
+            users:
+                administrator:
+                    name: administrator
+                    email: admin@example.com
+                    pass: "foo%^&&"
+                    roles: [ administrator, editor ]
+                    root: true
+                editor:
+                    name: editor
+                    email: editor@example.com
+                    roles: [ editor, sub-editor ]
+                "sub editor":
+                    name: "sub editor"
+                    email: "sub.editor@example.com"
+                    roles: [ sub-editor ]
+                authenticated:
+                    name: authenticated
+                    email: authenticated@example.com
+                    roles: [ "authenticated user" ]
             create: true                 # Whether to create all defined test users at the start of the suite.
             delete: true                 # Whether to delete all defined test users at the end of the suite.
             drush-alias: '@mysite.local' # The Drush alias to use when managing users via DrushTestUserManager.
-            root:
-                username: root           # Username for user with uid 1.
-                password: root           # Password for user with uid 1.
             username-prefix: robot       # Use this string instead of the default 'test' for prefixing test usernames.
 ```
 
 ### Required and optional configuration
 
-Configured values for `roles` and `password` are required. `drush-alias` is only currently required as [DrushTestUserManager](https://github.com/pfaocle/codeception-module-drupal-user-registry/blob/master/src/Drupal/UserRegistry/DrushTestUserManager.php) is the only class available for managing (creating/deleting) users.
+Configured values for `users` are required. `drush-alias` is only currently required as [DrushTestUserManager](https://github.com/pfaocle/codeception-module-drupal-user-registry/blob/master/src/Drupal/UserRegistry/DrushTestUserManager.php) is the only class available for managing (creating/deleting) users.
 
 Other optional configuration includes:
 
 * `create` and `delete` are assumed to be `false` if not set.
-* `emails` can optionally be set for any created test users, for use in tests.
-* The `root` key and its `username` and `password` are only required if `$I->getRootUser()` is used.
-* `username-prefix` can be used to set the prefix used for test users' usernames, instead of the default 'test'.
-
-### Derivate usernames
-
-Note that only a list of user roles is defined - no specific usernames. This is because we only need a single representative user account for a given role performing an acceptance test. Each role defined in configuration maps directly to a single user with username derived from the role name. For example, the configuration above would result in the following usernames: _test.administrator_, _test.editor_, _test.sub.editor_, _test.lowly.user_, _test.authenticated_.
-
-Derivative usernames are (by default) prefixed with _test._ and have any character in the role name matching the regex `/(\s|-)/` (i.e. whitespace and hyphens) replaced with a full-stop character (`.`). The test username prefix can be configured to something other than this default using the `username-prefix` key: see _Example suite configuration_, above.
-
-
-**Caution:** no test user is created when the "root" user is configured. If the `getRootUser()` method is to be used the username and password will need to be set to working credentials, **stored in plain text**.
-
+* `defaultPass` can be used to set a default test user password in case you don't want to add a password for each user. It can still be overridden on a per-user basis.
+* The `root` key can be added for any user (preferably just one) to indicate it is the root user (uid 1).
 
 ## Troubleshooting
 

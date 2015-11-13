@@ -29,10 +29,17 @@ class DrupalTestUser
     public $email;
 
     /**
-     * @var null|string
-     *   The role that this user should be given.
+     * @var string[]
+     *   The roles that this user should be given.
      */
-    public $roleName;
+    public $roles = array();
+
+    /**
+     * Whether this user is the root user (user 1).
+     *
+     * @var bool
+     */
+    public $isRoot = false;
 
     /**
      * Constructor.
@@ -41,16 +48,16 @@ class DrupalTestUser
      *   The username of this person.
      * @param string $pass
      *   The password for this user's account.
-     * @param string|null $roleName
+     * @param string[] $roles
      *   The role that this user should be given.
      * @param string|null $email
      *   The email address that this user should be given.
      */
-    public function __construct($name, $pass, $roleName = null, $email = null)
+    public function __construct($name, $pass, $roles = array(), $email = null)
     {
         $this->name = $name;
         $this->pass = $pass;
-        $this->roleName = $roleName;
+        $this->roles = $roles;
         $this->email = $email;
     }
 

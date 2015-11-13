@@ -64,7 +64,7 @@ class DrupalUserRegistry extends Module
      * @var array
      *   Required configuration.
      */
-    protected $requiredFields = ['roles', 'password'];
+    protected $requiredFields = ['users'];
 
     /**
      * @var TestUserManagerInterface
@@ -124,25 +124,28 @@ class DrupalUserRegistry extends Module
      */
     public function getUser($name)
     {
-        foreach ($this->drupalTestUsers as $drupalTestUser) {
-            if ($drupalTestUser->name == $name) {
-                return $drupalTestUser;
-            }
-        }
-        return false;
+        return isset($this->drupalTestUsers[$name]) ? $this->drupalTestUsers['name'] : false;
     }
 
     /**
-     * Returns a user account object for $role
+     * Returns a user account object for $role.
      *
      * @param string $role
      *   The returned user will be in this role.
      *
-     * @return DrupalTestUser
+     * @return DrupalTestUser|bool
+     *   The first DrupalTestUser to have the requested role, or false if no
+     *   user has that role.
      */
     public function getUserByRole($role)
     {
-        return $this->drupalTestUsers[$role];
+        foreach ($this->drupalTestUsers as $user) {
+            if (isset($user->roles) && in_array($role, $user->roles)) {
+                return $user;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -153,30 +156,35 @@ class DrupalUserRegistry extends Module
      */
     public function getRoles()
     {
-        $roles = $this->drupalTestUsers;
-        if (array_key_exists(self::DRUPAL_ROOT_USER_USERNAME, $roles)) {
-            unset($roles[self::DRUPAL_ROOT_USER_USERNAME]);
+        $roles = array();
+
+        // Go through all of the users and collect up the roles.
+        foreach ($this->drupalTestUsers as $user) {
+            if (isset($user->roles)) {
+                foreach ($user->roles as $role) {
+                    $roles[$role] = true;
+                }
+            }
         }
+
         return array_keys($roles);
     }
 
     /**
      * Get the "root" user with  uid 1, if configured.
      *
-     * @return DrupalTestUser
-     *   The configured "root" user.
-     *
-     * @throws ModuleException
+     * @return DrupalTestUser|bool
+     *   The configured "root" user. False if there isn't one.
      */
     public function getRootUser()
     {
-        if (!isset($this->config['root']['username']) || !isset($this->config['root']['password'])) {
-            throw new ModuleException(
-                __CLASS__,
-                "Credentials for the root user (username, password) are not configured."
-            );
+        foreach ($this->drupalTestUsers as $user) {
+            if ($user->isRoot) {
+                return $user;
+            }
         }
-        return new DrupalTestUser($this->config['root']['username'], $this->config['root']['password']);
+
+        return false;
     }
 
     /**

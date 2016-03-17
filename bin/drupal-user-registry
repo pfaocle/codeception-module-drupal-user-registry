@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+require_once dirname(__FILE__) . '/../vendor/autoload.php';
+
+use Codeception\Module\Drupal\UserRegistry\Command\CreateTestUsersCommand;
+use Codeception\Module\Drupal\UserRegistry\Command\DeleteTestUsersCommand;
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+$app->add(new CreateTestUsersCommand());
+$app->add(new DeleteTestUsersCommand());
+$app->run();

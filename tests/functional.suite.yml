@@ -3,7 +3,32 @@
 #
 class_name: FunctionalTester
 modules:
-    enabled: [Db, FunctionalHelper]
+    enabled: [Asserts, Db, FunctionalHelper]
+    config:
+        # Used for command line tests.
+        DrupalUserRegistry:
+            defaultPass: "foobar"
+            users:
+                administrator:
+                    name: test.administrator
+                    email: test.administrator@example.com
+                    pass: "foo"
+                    roles: [ administrator, editor ]
+                    root: true
+                editor:
+                    name: test.editor
+                    email: editor@example.com
+                    roles: [ editor, moderator ]
+                moderator:
+                    name: "test.moderator"
+                    email: "sub.editor@example.com"
+                    roles: [ moderator ]
+                authenticated:
+                    name: authenticated
+                    email: authenticated@example.com
+                    roles: [ "authenticated user" ]
+            drush-alias: "@d7.local"
+
 env:
     # Override Db module configuration to run on local.
     local:

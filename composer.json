@@ -31,5 +31,7 @@
         "psr-4": {
             "Codeception\\Module\\": "src"
         }
-    }
+    },
+
+    "bin": ["bin/drupal-user-registry"]
 }

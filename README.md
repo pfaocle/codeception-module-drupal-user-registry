@@ -176,6 +176,25 @@ Pull requests should be made to the **develop** branch.
 - Source code: https://github.com/ixis/codeception-module-drupal-user-registry
 
 
+## Creating or deleting users using the command line
+
+Once this module is installed in a Codeception test suite the following commands can be used to create and delete test users (from the root of the test suite):
+
+    # Create test users for all defined roles.
+    vendor/bin/drupal-user-registry users:create
+
+    # Delete test users for all defined roles.
+    vendor/bin/drupal-user-registry users:delete
+
+These commands will default to using the **acceptance** suite to determine the alias on which Drush will run from the suite's configuration. To run the commands using a suite other than **acceptance**, pass the suite name as an argument:
+
+    # Create test users for all defined roles in the front-end suite configuration.
+    vendor/bin/drupal-user-registry users:create front-end
+
+    # Delete test users for all defined roles in the front-end suite configuration.
+    vendor/bin/drupal-user-registry users:delete front-end
+
+
 ## Acknowledgements
 
 Thanks to [Andy Rigby](https://github.com/ixisandyr) for the storage code and inspiration.
